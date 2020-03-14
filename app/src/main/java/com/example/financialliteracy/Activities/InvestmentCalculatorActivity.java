@@ -159,4 +159,3 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
         tvTotalInterest.setText("");
     }
 }
-
