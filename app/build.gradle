@@ -18,6 +18,11 @@ android {
         }
     }
 }
+//allows the gradle project to load dependencies from a repository hosted on jitpack.io
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -34,4 +39,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'com.github.lecho:hellocharts-library:1.5.8@aar'
+
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
