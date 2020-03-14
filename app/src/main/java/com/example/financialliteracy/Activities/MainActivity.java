@@ -23,25 +23,13 @@ public class MainActivity extends AppCompatActivity {
 
         temp.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Context c = view.getContext();
                 Intent intent = new Intent(c, QuizActivity.class);
                 c.startActivity(intent);
 
             }
-        } );
-    }
-
-    public void launchInvestmentCalculatorActivity(View view) {
-
-        Intent intent = new Intent(this, InvestmentCalculatorActivity.class);
-        startActivity(intent);
-    }
-
-    public void launchInvestmentCalculatorActivity(View view) {
-
-        Intent intent = new Intent(this, InvestmentCalculatorActivity.class);
-        startActivity(intent);
+        });
     }
 
     public void launchInvestmentCalculatorActivity(View view) {
