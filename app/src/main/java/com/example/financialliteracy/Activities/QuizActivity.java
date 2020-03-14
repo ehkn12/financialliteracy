@@ -1,6 +1,7 @@
 package com.example.financialliteracy.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
@@ -35,7 +36,6 @@ public class QuizActivity extends AppCompatActivity {
     private Question currentQuestion;
 
     public static ArrayList<Integer> scoreHistoryList = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
