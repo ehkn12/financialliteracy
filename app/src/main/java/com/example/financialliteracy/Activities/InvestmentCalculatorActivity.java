@@ -7,10 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.financialliteracy.R;
 
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
 import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.view.LineChartView;
+
 
 public class InvestmentCalculatorActivity extends AppCompatActivity {
 
@@ -37,6 +36,7 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
     private TextView tvTotalInterest;
     private LineChartView mChart;
     private Line mLine;
+
 
 
     private Button btCompute;
@@ -59,7 +59,11 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
         tvInterestPrinciple = findViewById(R.id.tv_InterestPrincipal);
         tvInterestContribution = findViewById(R.id.tv_InterestContributions);
         tvTotalInterest = findViewById(R.id.tv_TotalInterest);
+
+
+
         mChart = findViewById(R.id.chart);
+
 
         String[] axisData = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept",
                 "Oct", "Nov", "Dec"};
