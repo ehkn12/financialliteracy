@@ -30,4 +30,10 @@ public class MainActivity extends AppCompatActivity {
             }
         } );
     }
+
+    public void launchInvestmentCalculatorActivity(View view) {
+
+        Intent intent = new Intent(this, InvestmentCalculatorActivity.class);
+        startActivity(intent);
+    }
 }
