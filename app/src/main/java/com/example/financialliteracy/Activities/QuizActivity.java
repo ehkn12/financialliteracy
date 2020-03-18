@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,13 +28,14 @@ public class QuizActivity extends AppCompatActivity {
     private RadioButton optionB;
     private RadioButton optionC;
     private TextView scoreText;
-   // private QuizActivity quizActivity = this;
+    // private QuizActivity quizActivity = this;
 
     private QuestionDatabase db;
 
     private int score = 0;
     private int questionNum = 0;
     private Question currentQuestion;
+    private List<Question> questionList;
 
     public static ArrayList<Integer> scoreHistoryList = new ArrayList<>();
 
@@ -54,11 +56,14 @@ public class QuizActivity extends AppCompatActivity {
         continueBtn = quizConstraintLayout.findViewById(R.id.button_continue);
         continueBtn.setText("Continue");
 
+        Intent quizIntent = getIntent();
+        int difficulty = quizIntent.getIntExtra("Difficulty", 1);
+
         db = db.getInstance(this);
 
         db.questionDao().insertAll(getQuestionList());
-        currentQuestion = db.questionDao().getQuestion(questionNum);
-        handleQuestionReturned(currentQuestion);
+        questionList = db.questionDao().getDifficultyQuestion(difficulty);
+        handleQuestionReturned(questionList);
 
 
 
@@ -88,7 +93,7 @@ public class QuizActivity extends AppCompatActivity {
 
 
 
-    public List<Question> getQuestionList(){
+    public static List<Question> getQuestionList(){
         //TODO:: to put this somewhere that's not here
         //TODO:: add url from api, not sure we can find relevant data in our APIs for these questions
         //questions and answers from https://www.sageadvice.eu/2017/11/27/trivia-quiz-on-5th-edition-dd-rules/
@@ -168,9 +173,10 @@ public class QuizActivity extends AppCompatActivity {
     }
 
 
-    public void handleQuestionReturned(Question question) {
-        currentQuestion = question;
+    public void handleQuestionReturned(List<Question> questionList) {
+        currentQuestion = questionList.get(0);
         setQuestion(currentQuestion, score);
+        final List<Question> questions = questionList;
 
 
         continueBtn.setOnClickListener(new View.OnClickListener() {
@@ -193,14 +199,14 @@ public class QuizActivity extends AppCompatActivity {
 
                     // Below code is to make sure that the button text changes to finish quiz on final question, and to
                     // record the final score in an ArrayList
-                    if (questionNum < getQuestionList().size() - 2) {
+                    if (questionNum < questions.size() - 2) {
                         questionNum++;
 
-                        setQuestion(retrieveQuestionFromDb(questionNum),score);
+                        setQuestion(questions.get(questionNum),score);
 
-                    } else if (questionNum == getQuestionList().size() - 2) {
+                    } else if (questionNum == questions.size() - 2) {
                         questionNum++;
-                        setQuestion(retrieveQuestionFromDb(questionNum),score);
+                        setQuestion(questions.get(questionNum),score);
 
                         continueBtn.setText("Finish Quiz");
                     } else {
@@ -221,3 +227,4 @@ public class QuizActivity extends AppCompatActivity {
         return question;
     }
 }
+
