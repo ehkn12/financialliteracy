@@ -21,15 +21,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         temp = findViewById(R.id.button_temp);
 
-        temp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context c = view.getContext();
-                Intent intent = new Intent(c, QuizActivity.class);
-                c.startActivity(intent);
-
-            }
-        } );
+//        temp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Context c = view.getContext();
+//                Intent intent = new Intent(c, QuizActivity.class);
+//                c.startActivity(intent);
+//
+//            }
+//        } );
     }
 
     public void launchInvestmentCalculatorActivity(View view) {

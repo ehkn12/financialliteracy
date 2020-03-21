@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
 
     <TextView
@@ -271,22 +271,37 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:text="Refresh"
+        android:text="Reset"
         app:layout_constraintBottom_toBottomOf="@+id/bt_calculate"
         app:layout_constraintStart_toEndOf="@+id/bt_calculate"
         app:layout_constraintTop_toTopOf="@+id/bt_calculate" />
 
-    <lecho.lib.hellocharts.view.LineChartView
-        android:id="@+id/chart"
-        android:layout_width="310dp"
-        android:layout_height="216dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/titleTotalInterest">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/pieFragment"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTotalInterest"
-        app:layout_constraintVertical_bias="0.527"
-        tools:ignore="MissingPrefix" />
+        app:layout_constraintTop_toBottomOf="@+id/titleTotalInterest" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/lineFragment"
+        android:name="com.example.financialliteracy.Fragments.LineChartFragment"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pieFragment" />
+    </ScrollView>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

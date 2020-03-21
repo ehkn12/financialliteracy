@@ -9,17 +9,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.financialliteracy.Fragments.PieChartFragment;
 import com.example.financialliteracy.R;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.view.LineChartView;
 
 
 public class InvestmentCalculatorActivity extends AppCompatActivity {
@@ -34,13 +28,12 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
     private TextView tvInterestPrinciple;
     private TextView tvInterestContribution;
     private TextView tvTotalInterest;
-    private LineChartView mChart;
-    private Line mLine;
-
 
 
     private Button btCompute;
     private Button btReset;
+    private Button btGraph;
+
 
     private static final String TAG = "InvestmentCalculatorActivity";
 
@@ -61,47 +54,6 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
         tvTotalInterest = findViewById(R.id.tv_TotalInterest);
 
 
-
-        mChart = findViewById(R.id.chart);
-
-
-        String[] axisData = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept",
-                "Oct", "Nov", "Dec"};
-        int[] yAxisData = {50, 20, 15, 30, 20, 60, 15, 40, 45, 10, 90, 18};
-
-
-        List yAxisValues = new ArrayList();
-        List axisValues = new ArrayList();
-
-        mLine = new Line(yAxisValues);
-
-        for(int i = 0; i < axisData.length; i++){
-            axisValues.add(i, new AxisValue(i).setLabel(axisData[i]));
-        }
-
-        for (int i = 0; i < yAxisData.length; i++){
-            yAxisValues.add(new PointValue(i, yAxisData[i]));
-        }
-
-        List lines = new ArrayList();
-        lines.add(mLine);
-
-        LineChartData data = new LineChartData();
-        data.setLines(lines);
-
-        mChart.setLineChartData(data);
-
-        Axis axis = new Axis();
-        axis.setValues(axisValues);
-        data.setAxisXBottom(axis);
-
-        Axis yAxis = new Axis();
-        data.setAxisYLeft(yAxis);
-
-        axis.setTextSize(16);
-        yAxis.setName("Amount");
-
-
         btCompute = findViewById(R.id.bt_calculate);
         btReset = findViewById(R.id.bt_refresh);
 
@@ -109,6 +61,7 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 computeValue();
+
             }
         });
         btReset.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +70,7 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
                 resetCalc();
             }
         });
+
 
     }
 
@@ -143,6 +97,19 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
             tvInterestPrinciple.setText(String.format("%.2f", interestPrincipal));
             tvInterestContribution.setText(String.format("%.2f", interestContributions));
             tvTotalInterest.setText(String.format("%.2f", totalInterest));
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            Bundle arguments = new Bundle();
+            arguments.putDouble("Future Value", futureValue);
+            arguments.putDouble("Interest Principle", interestPrincipal);
+            arguments.putDouble("Interest Contributions", interestContributions);
+            PieChartFragment fragment = new PieChartFragment();
+            fragment.setArguments(arguments);
+            transaction.replace(R.id.pieFragment,fragment);
+            transaction.commit();
+
+
         } catch (Exception e) {
             Toast.makeText(this, "Please enter numeric values", Toast.LENGTH_SHORT).show();
 
@@ -161,5 +128,22 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
         tvInterestContribution.setText("");
         tvInterestPrinciple.setText("");
         tvTotalInterest.setText("");
+
+        double futureValue = 0;
+        double interestPrincipal = 0;
+        double interestContributions = 0;
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Bundle arguments = new Bundle();
+        arguments.putDouble("Future Value", futureValue);
+        arguments.putDouble("Interest Principle", interestPrincipal);
+        arguments.putDouble("Interest Contributions", interestContributions);
+        PieChartFragment fragment = new PieChartFragment();
+        fragment.setArguments(arguments);
+        transaction.replace(R.id.pieFragment,fragment);
+        transaction.commit();
+
     }
+
 }
