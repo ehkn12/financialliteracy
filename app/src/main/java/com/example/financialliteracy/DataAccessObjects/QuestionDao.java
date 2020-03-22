@@ -30,5 +30,5 @@ public interface QuestionDao {
     public Question getQuestion(int number);
 
     @Query("SELECT * FROM question WHERE category = :number")
-    public List<Question> getDifficultyQuestion(int number);
+    public List<Question> getQuestionCategory(int number);
 }

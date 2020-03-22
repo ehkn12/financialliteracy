@@ -8,8 +8,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,27 +40,42 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
     public int streak;
     private QuestionDatabase db;
     private int randomNum;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pref = this.getSharedPreferences("My Pref", 0);
+        editor = pref.edit();
         temp = findViewById(R.id.button_temp);
         difficulty = findViewById(R.id.edit_difficulty);
         popupView = findViewById(R.id.container_popup);
         //remove later
         temp2 = findViewById(R.id.button_popup);
-
-        //picking question
-        Random random = new Random();
-        randomNum = random.nextInt(10);
-
-        db = db.getInstance(this);
-        db.questionDao().insertAll(QuizActivity.getQuestionList());
-
+        editor.putBoolean("APP_START", true);
+        editor.commit();
 
         quizPopup = new DailyQuizFragment();
+
+        mHandler = new Handler();
+        startRepeatingTask();
+
+        if(pref.getBoolean("APP_START", false) == true){
+
+            Bundle bundle = new Bundle();
+            bundle.putInt("question", randomNum);
+            quizPopup.setArguments(bundle);
+            swapFragment(quizPopup);
+            editor.remove("APP_START");
+            editor.putBoolean("APP_START", false);
+            editor.commit();
+        }
+
+
 
 
 
@@ -88,15 +105,6 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
             }
         });
 
-        temp2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
-                Bundle bundle = new Bundle();
-                bundle.putInt("question", randomNum);
-                quizPopup.setArguments(bundle);
-                swapFragment(quizPopup);
-            }
-        });
     }
 
     public void launchInvestmentCalculatorActivity(View view) {
@@ -120,7 +128,41 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
     }
 
 
+    private int mInterval = 86400000; //supposedly 24 hours
+    private Handler mHandler;
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopRepeatingTask();
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                updateStatus(); //this function can change value of mInterval.
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                Random random = new Random();
+                randomNum = random.nextInt(10);
+                editor.putBoolean("APP_START", true);
+                mHandler.postDelayed(mStatusChecker, mInterval);
+            }
+        }
+    };
+
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
+    }
+
+    public void updateStatus () {
+    }
 
 }
 

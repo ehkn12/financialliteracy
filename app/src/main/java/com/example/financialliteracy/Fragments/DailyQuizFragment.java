@@ -19,12 +19,17 @@ import android.widget.Toast;
 
 import com.example.financialliteracy.Activities.MainActivity;
 import com.example.financialliteracy.Activities.QuizActivity;
+import com.example.financialliteracy.AsyncTasks.QuestionAsyncTaskDelegate;
+import com.example.financialliteracy.AsyncTasks.QuestionInsertAsyncTask;
+import com.example.financialliteracy.AsyncTasks.QuestionRetrieveAsyncTask;
 import com.example.financialliteracy.Databases.QuestionDatabase;
 import com.example.financialliteracy.Models.Question;
 import com.example.financialliteracy.R;
 
+import java.util.List;
 
-public class DailyQuizFragment extends DialogFragment {
+
+public class DailyQuizFragment extends DialogFragment implements QuestionAsyncTaskDelegate {
 
     private OnFragmentInteractionListener mListener;
     private View view;
@@ -37,6 +42,7 @@ public class DailyQuizFragment extends DialogFragment {
     private Button finish;
     private QuestionDatabase db;
     private Context context;
+    private DailyQuizFragment dailyQuizFragment = this;
 
     private RadioGroup radioGroup;
     private RadioButton answer;
@@ -66,43 +72,11 @@ public class DailyQuizFragment extends DialogFragment {
         context = getContext();
 
         db = db.getInstance(getContext());
-        db.questionDao().insertAll(QuizActivity.getQuestionList());
+        insertQuestionsInDatabase(QuizActivity.getQuestionList());
 
         Bundle bundle = this.getArguments();
-        questionObject = db.questionDao().getQuestion(bundle.getInt("question"));
-        setQuestion(questionObject);
+        retrieveQuestionFromDatabase(bundle.getInt("question"));
 
-        finish.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-
-                answer = view.findViewById(radioGroup.getCheckedRadioButtonId());
-                if (questionObject.getAnswer().equals(answer.getText())) {
-                    Toast.makeText(getContext(), "Keep the streak going!", Toast.LENGTH_LONG).show();
-
-                }
-
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .remove(DailyQuizFragment.this).commit();
-                
-
-
-
-               /* try {
-                    RadioButton answer = view.findViewById(radioGroup.getCheckedRadioButtonId());
-                    if (questionObject.getAnswer().equals(answer.getText())){
-                        Toast.makeText(getContext(), "Keep the streak going!", Toast.LENGTH_LONG).show();
-                        onDetach();
-
-
-                    } else {
-                        onDetach();
-                    }
-                } catch (NullPointerException e) {
-                    Toast.makeText(getContext(), "Choose an answer!", Toast.LENGTH_LONG).show();
-                } */
-            }
-        });
 
 
         //receive message from handler?
@@ -158,5 +132,48 @@ public class DailyQuizFragment extends DialogFragment {
         optionB.setText(questionData.getOptionB());
         optionC.setText(questionData.getOptionC());
 
+    }
+
+    @Override
+    public void handleQuestionReturned(Question question) {
+        setQuestion(question);
+
+        finish.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                answer = view.findViewById(radioGroup.getCheckedRadioButtonId());
+
+                try {
+                    RadioButton answer = view.findViewById(radioGroup.getCheckedRadioButtonId());
+                    if (questionObject.getAnswer().equals(answer.getText())){
+                        Toast.makeText(getContext(), "Keep the streak going!", Toast.LENGTH_LONG).show();
+
+
+
+                    } else {
+
+                    }
+                } catch (NullPointerException e) {
+                    Toast.makeText(getContext(), "Choose an answer!", Toast.LENGTH_LONG).show();
+                } finally {
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .remove(DailyQuizFragment.this).commit();
+                }
+            }
+        });
+    }
+
+    public void insertQuestionsInDatabase(List<Question> questions){
+        QuestionInsertAsyncTask insertAsyncTask = new QuestionInsertAsyncTask();
+        insertAsyncTask.setDelegate(dailyQuizFragment);
+        insertAsyncTask.setQuestionDatabase(db);
+        insertAsyncTask.execute(questions);
+    }
+
+    public void retrieveQuestionFromDatabase(int questionNum){
+        QuestionRetrieveAsyncTask retrieveAsyncTask = new QuestionRetrieveAsyncTask();
+        retrieveAsyncTask.setDelegate(dailyQuizFragment);
+        retrieveAsyncTask.setQuestionDatabase(db);
+        retrieveAsyncTask.execute(questionNum);
     }
 }

@@ -18,7 +18,7 @@ public abstract class QuestionDatabase extends RoomDatabase {
 
         //TODO: change to asynctask
         if(instance == null){
-            instance = Room.databaseBuilder(context, QuestionDatabase.class, "questDB").allowMainThreadQueries().build();
+            instance = Room.databaseBuilder(context, QuestionDatabase.class, "questDB").build();
         }
         return instance;
     }
