@@ -16,8 +16,12 @@ import android.widget.TextView;
 
 import com.example.financialliteracy.R;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
+import java.util.ArrayList;
 
 import lecho.lib.hellocharts.model.Line;
 
@@ -46,6 +50,16 @@ public class LineChartFragment extends Fragment {
         mLineChart = (LineChart) root.findViewById(R.id.lineView);
         mLineChart.setOnChartGestureListener((OnChartGestureListener) LineChartFragment.this.getActivity());
         mLineChart.setOnChartValueSelectedListener((OnChartValueSelectedListener) LineChartFragment.this.getActivity());
+        mLineChart.setDragEnabled(true);
+        mLineChart.setScaleEnabled(false);
+
+        ArrayList<Entry> yValues = new ArrayList();
+        ArrayList<Entry> xValues = new ArrayList();
+
+        LineDataSet set1 = new LineDataSet(yValues, "Data Set 1");
+        LineDataSet set2 = new LineDataSet(xValues, "Data Set 2");
+
+
 
 
         mLineChartViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
