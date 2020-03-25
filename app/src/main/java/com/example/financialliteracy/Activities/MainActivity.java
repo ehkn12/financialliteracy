@@ -25,6 +25,7 @@ import com.example.financialliteracy.R;
 
 import org.w3c.dom.Node;
 
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -36,13 +37,18 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
     private View popupView;
 
     private DailyQuizFragment quizPopup;
-    public LinkedList<Integer> streakQuestions;
-    public int streak;
     private QuestionDatabase db;
+
+    //for the question num
+    private Random random;
     private int randomNum;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private Calendar calendar;
 
+    private int today;
+    private int lastDay;
+    private int streak;
 
 
     @Override
@@ -51,32 +57,37 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
         setContentView(R.layout.activity_main);
         pref = this.getSharedPreferences("My Pref", 0);
         editor = pref.edit();
+        calendar = Calendar.getInstance();
+        random = new Random();
+
+        today = calendar.get(Calendar.DAY_OF_YEAR); // today in year
+        lastDay = pref.getInt("LAST_DATE", 0);
+        streak = pref.getInt("QUIZ_STREAK", 0);
+
+
         temp = findViewById(R.id.button_temp);
         difficulty = findViewById(R.id.edit_difficulty);
         popupView = findViewById(R.id.container_popup);
         //remove later
         temp2 = findViewById(R.id.button_popup);
-        editor.putBoolean("APP_START", true);
-        editor.commit();
+
 
         quizPopup = new DailyQuizFragment();
 
-        mHandler = new Handler();
-        startRepeatingTask();
-
-        if(pref.getBoolean("APP_START", false) == true){
-
+        if (pref.getInt("ANSWERED", 0) == 0) {
+            if (lastDay != today - 1) {
+                streak = 0;
+                editor.putInt("QUIZ_STREAK", streak);
+            }
             Bundle bundle = new Bundle();
+            randomNum = random.nextInt(10);
             bundle.putInt("question", randomNum);
             quizPopup.setArguments(bundle);
             swapFragment(quizPopup);
-            editor.remove("APP_START");
-            editor.putBoolean("APP_START", false);
+            editor.putInt("LAST_DATE", today);
             editor.commit();
+
         }
-
-
-
 
 
         //quiz button
@@ -115,8 +126,8 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
 
     @Override
     public void onFragmentInteraction(int num) {
-       // Question question = db.questionDao().getQuestion(num);
-       // quizPopup.setQuestion(question);
+        // Question question = db.questionDao().getQuestion(num);
+        // quizPopup.setQuestion(question);
     }
 
 
@@ -128,41 +139,4 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
     }
 
 
-    private int mInterval = 86400000; //supposedly 24 hours
-    private Handler mHandler;
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopRepeatingTask();
-    }
-
-    Runnable mStatusChecker = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                updateStatus(); //this function can change value of mInterval.
-            } finally {
-                // 100% guarantee that this always happens, even if
-                // your update method throws an exception
-                Random random = new Random();
-                randomNum = random.nextInt(10);
-                editor.putBoolean("APP_START", true);
-                mHandler.postDelayed(mStatusChecker, mInterval);
-            }
-        }
-    };
-
-    void startRepeatingTask() {
-        mStatusChecker.run();
-    }
-
-    void stopRepeatingTask() {
-        mHandler.removeCallbacks(mStatusChecker);
-    }
-
-    public void updateStatus () {
-    }
-
 }
-

@@ -1,6 +1,7 @@
 package com.example.financialliteracy.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -50,6 +51,10 @@ public class DailyQuizFragment extends DialogFragment implements QuestionAsyncTa
     private Question questionObject;
 
     private int questionNum;
+    private int streak;
+
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
 
     public DailyQuizFragment() {
@@ -69,29 +74,19 @@ public class DailyQuizFragment extends DialogFragment implements QuestionAsyncTa
         finish = view.findViewById(R.id.button_submit);
         radioGroup = view.findViewById(R.id.group_options);
 
-        context = getContext();
 
-        db = db.getInstance(getContext());
+        context = getContext();
+        //shared preferences
+        pref = context.getSharedPreferences("My Pref", 0);
+        editor = pref.edit();
+
+        //database instancing
+        db = db.getInstance(context);
         insertQuestionsInDatabase(QuizActivity.getQuestionList());
 
         Bundle bundle = this.getArguments();
         retrieveQuestionFromDatabase(bundle.getInt("question"));
 
-
-
-        //receive message from handler?
-        //use the arguments to populate the daily quiz pop up?
-        //RECURSION??
-
-        //in theory, if time == 12am, change question, and done question to false
-        //if done question = false, open up fragment everytime app open, until skip or submit (skip will change streak to zero)
-        //submit if answer is right, add to score? answer is wrong, end streak to zero . in both questions answer is done so dont open up question for that seesion?
-
-        /*the streak could  be on a linked list, nodes are added and counted to see how the streak is going. (vs why not an arraylist), destroying it every time.
-        streak could be stored as int streak, as number of nodes, however if linked list doesnt exist, that means theres no streak?
-         */
-
-        //picking the question can come from a randomiser -> how many whatever dummy questions we have for now
 
         return view;
 
@@ -142,20 +137,24 @@ public class DailyQuizFragment extends DialogFragment implements QuestionAsyncTa
             @Override
             public void onClick(View v){
                 answer = view.findViewById(radioGroup.getCheckedRadioButtonId());
+                streak = pref.getInt("QUIZ_STREAK", 0);
 
                 try {
                     RadioButton answer = view.findViewById(radioGroup.getCheckedRadioButtonId());
                     if (questionObject.getAnswer().equals(answer.getText())){
                         Toast.makeText(getContext(), "Keep the streak going!", Toast.LENGTH_LONG).show();
-
+                        streak++;
 
 
                     } else {
+                        streak = 0;
 
                     }
                 } catch (NullPointerException e) {
-                    Toast.makeText(getContext(), "Choose an answer!", Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getContext(), "Choose an answer!", Toast.LENGTH_LONG).show();
                 } finally {
+                    editor.putInt("QUIZ_STREAK", streak);
+                    editor.putInt("ANSWERED", 1).commit();
                     getActivity().getSupportFragmentManager().beginTransaction()
                             .remove(DailyQuizFragment.this).commit();
                 }
