@@ -1,9 +1,12 @@
 package com.example.financialliteracy.Fragments;
 
+import androidx.annotation.ColorRes;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +24,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ColorFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.sql.SQLOutput;
@@ -74,19 +78,50 @@ public class LineChartFragment extends Fragment {
         mLineChart.setScaleEnabled(false);
 
         ArrayList<Entry> entries = new ArrayList();
+        ArrayList<Entry> entries2 = new ArrayList();
+        ArrayList<Entry> entries3 = new ArrayList();
+
 
         for (int t = 0; t <= year2; t++) {
-            System.out.println("testing3 : " + t);
+
 
             entries.add(new Entry((float)t,(float)(P*(Math.pow(1+((r/100)/n),n*t))+ (PMT*(((Math.pow(1+((r/100)/n),n*t))-1)/((r/100)))*12))));
+            entries2.add(new Entry((float)t,(float)(P+(PMT*n*t))));
+            entries3.add(new Entry((float)t,(float)(((P*(Math.pow(1+((r/100)/n),n*t))+(PMT*(((Math.pow(1+((r/100)/n),n*t))-1)/((r/100)))*12))-(P+(PMT*n*t))))));
+
+            System.out.println("testing3 : " + t);
+            System.out.println("Total : "+ (P*(Math.pow(1+((r/100)/n),n*t))+ (PMT*(((Math.pow(1+((r/100)/n),n*t))-1)/((r/100)))*12)));
+            System.out.println("Principal : " + (P+(PMT*n*t)));
+            System.out.println("Interest : " + ((P*(Math.pow(1+((r/100)/n),n*t))+(PMT*(((Math.pow(1+((r/100)/n),n*t))-1)/((r/100)))*12))-(P+(PMT*n*t))));
         }
+
 
             LineDataSet set1 = new LineDataSet(entries, "Total Contributions over Time");
             set1.setFillAlpha(110);
             set1.setLineWidth(2f);
             set1.setValueTextSize(10f);
             set1.setCircleRadius(4f);
+            set1.setCircleColors(Color.parseColor("#AA85C8F2"));
+            set1.setColor(Color.parseColor("#AA85C8F2"));
             set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+            LineDataSet set2 = new LineDataSet(entries2, "Interest on Principal");
+            set2.setFillAlpha(110);
+            set2.setLineWidth(2f);
+            set2.setValueTextSize(10f);
+            set2.setCircleRadius(4f);
+            set2.setCircleColors(Color.parseColor("#AAF2811D"));
+            set2.setColor(Color.parseColor("#AAF2811D"));
+            set2.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+            LineDataSet set3 = new LineDataSet(entries3, "Interest on Contributions");
+            set3.setFillAlpha(110);
+            set3.setLineWidth(2f);
+            set3.setValueTextSize(10f);
+            set3.setCircleRadius(4f);
+            set3.setColor(Color.parseColor("#AAF26666"));
+            set3.setCircleColors(Color.parseColor("#AAF26666"));
+            set3.setAxisDependency(YAxis.AxisDependency.LEFT);
 
             YAxis leftAxis = mLineChart.getAxisLeft();
             leftAxis.setDrawAxisLine(false);
@@ -94,7 +129,7 @@ public class LineChartFragment extends Fragment {
             leftAxis.setAxisMinimum(0f);
 
             Legend leg1 = mLineChart.getLegend();
-            leg1.setEnabled(false);
+            leg1.setEnabled(true);
 
             Description des1 = mLineChart.getDescription();
             des1.setTextSize(14f);
@@ -108,9 +143,13 @@ public class LineChartFragment extends Fragment {
 
             ArrayList<ILineDataSet> dataSets = new ArrayList<>();
             dataSets.add(set1);
+            dataSets.add(set2);
+            dataSets.add(set3);
+
 
             LineData data = new LineData(dataSets);
             mLineChart.setData(data);
+
 
             mLineChartViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
                 @Override

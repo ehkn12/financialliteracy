@@ -16,6 +16,8 @@ import com.example.financialliteracy.Fragments.LineChartFragment;
 import com.example.financialliteracy.Fragments.PieChartFragment;
 import com.example.financialliteracy.R;
 
+import java.sql.SQLOutput;
+
 
 public class InvestmentCalculatorActivity extends AppCompatActivity {
 
@@ -93,6 +95,7 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
             double interestPrincipal = A-P;
             double interestContributions = B-totalContributions;
             double totalInterest = (((interestPrincipal+interestContributions)/futureValue)*100);
+
 
             tvFutureValue.setText(String.format("%.2f", futureValue));
             tvTotalContributions.setText(String.format("%.2f", totalContributions));
