@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.financialliteracy.Fragments.LineChartFragment;
 import com.example.financialliteracy.Fragments.PieChartFragment;
 import com.example.financialliteracy.R;
 
@@ -78,7 +79,8 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
     private void computeValue() {
         try {
             double r = Double.parseDouble(String.valueOf(tvAnnualInterestRate.getText()));
-            int t = Integer.parseInt(String.valueOf(tvNumberOfYears.getText()));
+            double t = Double.parseDouble(String.valueOf(tvNumberOfYears.getText()));
+            System.out.println("testing1 : " + t);
             double P = Double.parseDouble(String.valueOf(tvInvestmentAmount.getText()));
             double PMT = Double.parseDouble(String.valueOf(tvAdditionalContributions.getText()));
             double n = Double.parseDouble(String.valueOf(tvTimesCompounded.getText()));
@@ -108,6 +110,20 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
             fragment.setArguments(arguments);
             transaction.replace(R.id.pieFragment,fragment);
             transaction.commit();
+
+            FragmentManager fragmentManager2 = getSupportFragmentManager();
+            FragmentTransaction transaction2 = fragmentManager2.beginTransaction();
+            Bundle arguments2 = new Bundle();
+            arguments2.putDouble("Interest Rate", r);
+            arguments2.putDouble("Year", t);
+            arguments2.putDouble("Initial Investment", P);
+            arguments2.putDouble("Additional Contributions", PMT);
+            arguments2.putDouble("Times Compounded",n);
+            LineChartFragment fragment2 = new LineChartFragment();
+            fragment2.setArguments(arguments2);
+            transaction2.replace(R.id.lineFragment,fragment2);
+            transaction2.commit();
+
 
 
         } catch (Exception e) {
@@ -143,6 +159,25 @@ public class InvestmentCalculatorActivity extends AppCompatActivity {
         fragment.setArguments(arguments);
         transaction.replace(R.id.pieFragment,fragment);
         transaction.commit();
+
+        double r = 0;
+        double t = 0;
+        double P = 0;
+        double PMT = 0;
+        double n = 0;
+
+        FragmentManager fragmentManager2 = getSupportFragmentManager();
+        FragmentTransaction transaction2 = fragmentManager2.beginTransaction();
+        Bundle arguments2 = new Bundle();
+        arguments2.putDouble("Interest Rate", r);
+        arguments2.putDouble("Year", t);
+        arguments2.putDouble("Initial Investment", P);
+        arguments2.putDouble("Additional Contributions", PMT);
+        arguments2.putDouble("Times Compounded", n);
+        LineChartFragment fragment2 = new LineChartFragment();
+        fragment2.setArguments(arguments2);
+        transaction2.replace(R.id.lineFragment,fragment2);
+        transaction2.commit();
 
     }
 

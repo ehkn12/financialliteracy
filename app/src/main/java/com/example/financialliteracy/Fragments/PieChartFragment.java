@@ -84,11 +84,4 @@ public class PieChartFragment extends Fragment {
         return root;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mPieChartViewModel = ViewModelProviders.of(this).get(PieChartViewModel.class);
-        // TODO: Use the ViewModel
-    }
-
 }
