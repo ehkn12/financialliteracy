@@ -6,7 +6,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 
+
 import android.content.Context;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -14,14 +16,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;
+
+import android.widget.EditText;
+import android.widget.TextView;
+
 
 import com.example.financialliteracy.Databases.QuestionDatabase;
 import com.example.financialliteracy.Fragments.DailyQuizFragment;
 import com.example.financialliteracy.Models.Question;
 import com.example.financialliteracy.R;
+
 
 import org.w3c.dom.Node;
 
@@ -30,6 +38,9 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements DailyQuizFragment.OnFragmentInteractionListener {
+
+    Button tax;
+
 
     private Button temp;
     private Button temp2;
@@ -55,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         pref = this.getSharedPreferences("My Pref", 0);
         editor = pref.edit();
         calendar = Calendar.getInstance();
@@ -63,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
         today = calendar.get(Calendar.DAY_OF_YEAR); // today in year
         lastDay = pref.getInt("LAST_DATE", 0);
         streak = pref.getInt("QUIZ_STREAK", 0);
+
 
 
         temp = findViewById(R.id.button_temp);
@@ -130,6 +143,20 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
     public void launchInvestmentCalculatorActivity(View view) {
 
         Intent intent = new Intent(this, InvestmentCalculatorActivity.class);
+
+
+        tax = (Button) findViewById(R.id.tax);
+        tax.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                openTaxTalc();
+            }
+        });
+    }
+
+    public void openTaxTalc (){
+        Intent intent = new Intent(this, taxcalc.class);
+
         startActivity(intent);
     }
 
