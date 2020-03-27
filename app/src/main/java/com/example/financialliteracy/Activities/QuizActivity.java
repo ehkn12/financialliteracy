@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.financialliteracy.AsyncTasks.QuestionAsyncTaskDelegate;
+import com.example.financialliteracy.AsyncTasks.QuestionCategoryAsyncTaskDelegate;
+import com.example.financialliteracy.AsyncTasks.QuestionCategoryRetrieveAsyncTask;
+import com.example.financialliteracy.AsyncTasks.QuestionInsertAsyncTask;
 import com.example.financialliteracy.Databases.QuestionDatabase;
 import com.example.financialliteracy.Models.Question;
 import com.example.financialliteracy.R;
@@ -19,7 +24,7 @@ import com.example.financialliteracy.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuizActivity extends AppCompatActivity {
+public class QuizActivity extends AppCompatActivity implements QuestionCategoryAsyncTaskDelegate, QuestionAsyncTaskDelegate {
 
     private Button continueBtn;
     private TextView questionText;
@@ -27,13 +32,15 @@ public class QuizActivity extends AppCompatActivity {
     private RadioButton optionB;
     private RadioButton optionC;
     private TextView scoreText;
-   // private QuizActivity quizActivity = this;
+    // private QuizActivity quizActivity = this;
 
     private QuestionDatabase db;
 
     private int score = 0;
     private int questionNum = 0;
     private Question currentQuestion;
+    private List<Question> questionList;
+    private QuizActivity quizActivity = this;
 
     public static ArrayList<Integer> scoreHistoryList = new ArrayList<>();
 
@@ -54,11 +61,14 @@ public class QuizActivity extends AppCompatActivity {
         continueBtn = quizConstraintLayout.findViewById(R.id.button_continue);
         continueBtn.setText("Continue");
 
+        //TODO:: change to category
+        Intent quizIntent = getIntent();
+        int difficulty = quizIntent.getIntExtra("Difficulty", 1);
+
         db = db.getInstance(this);
 
-        db.questionDao().insertAll(getQuestionList());
-        currentQuestion = db.questionDao().getQuestion(questionNum);
-        handleQuestionReturned(currentQuestion);
+        insertQuestionListInDatabase(getQuestionList());
+        retrieveQuestionListFromDatabase(difficulty);
 
 
 
@@ -75,20 +85,83 @@ public class QuizActivity extends AppCompatActivity {
 
 
 
+    @Override
+    public void handleQuestionListReturned(List<Question> questionList) {
+        currentQuestion = questionList.get(0);
+        setQuestion(currentQuestion, score);
+        final List<Question> questions = questionList;
+
+
+        continueBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                RadioGroup radioGroup = findViewById(R.id.options_quiz);
+                if (radioGroup.getCheckedRadioButtonId() == -1) {
+                } else {
+                    RadioButton answer = findViewById(radioGroup.getCheckedRadioButtonId());
+                    if (currentQuestion.getAnswer().equals(answer.getText())) {
+
+                        score++;
+                    } else {
+                        //TODO://get rid of this
+
+                    }
+                    answer.setChecked(false);
+                    Toast.makeText(getApplicationContext(), Integer.toString(questionNum), Toast.LENGTH_LONG).show();
+
+                    // Below code is to make sure that the button text changes to finish quiz on final question, and to
+                    // record the final score in an ArrayList
+                    if (questionNum < questions.size() - 2) {
+                        questionNum++;
+
+                        setQuestion(questions.get(questionNum),score);
+
+                    } else if (questionNum == questions.size() - 2) {
+                        questionNum++;
+                        setQuestion(questions.get(questionNum),score);
+
+                        continueBtn.setText("Finish Quiz");
+                    } else {
+                        //scoreHistoryList.add(score);
+                        //Toast to check for score at the end
+                        Toast.makeText(getApplicationContext(), Integer.toString(score), Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+
+                }
+            }
+        });
+
+    }
+
+    //to prevent errors, need to do clean up
+    @Override
+    public void handleQuestionReturned(Question question){
+        int num = question.getId();
+        System.out.println(num);
+    }
+
+
+    public void insertQuestionListInDatabase(List<Question> questionList){
+        QuestionInsertAsyncTask insertAsyncTask = new QuestionInsertAsyncTask();
+        insertAsyncTask.setQuestionDatabase(db);
+        insertAsyncTask.setDelegate(quizActivity);
+        insertAsyncTask.execute(questionList);
+
+    }
+
+    public void retrieveQuestionListFromDatabase(int questionCategory){
+        QuestionCategoryRetrieveAsyncTask questionRetrieveAsyncTask = new QuestionCategoryRetrieveAsyncTask();
+        questionRetrieveAsyncTask.setQuestionDatabase(db);
+        questionRetrieveAsyncTask.setDelegate(quizActivity);
+        questionRetrieveAsyncTask.execute(questionCategory);
+    }
 
 
 
 
-
-
-
-
-
-
-
-
-
-    public List<Question> getQuestionList(){
+    public static List<Question> getQuestionList(){
         //TODO:: to put this somewhere that's not here
         //TODO:: add url from api, not sure we can find relevant data in our APIs for these questions
         //questions and answers from https://www.sageadvice.eu/2017/11/27/trivia-quiz-on-5th-edition-dd-rules/
@@ -166,58 +239,5 @@ public class QuizActivity extends AppCompatActivity {
 
         return questionList;
     }
-
-
-    public void handleQuestionReturned(Question question) {
-        currentQuestion = question;
-        setQuestion(currentQuestion, score);
-
-
-        continueBtn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                RadioGroup radioGroup = findViewById(R.id.options_quiz);
-                if (radioGroup.getCheckedRadioButtonId() == -1) {
-                } else {
-                    RadioButton answer = findViewById(radioGroup.getCheckedRadioButtonId());
-                    if (currentQuestion.getAnswer().equals(answer.getText())) {
-
-                        score++;
-                    } else {
-                        //TODO://get rid of this
-
-                    }
-                    answer.setChecked(false);
-                    Toast.makeText(getApplicationContext(), Integer.toString(questionNum), Toast.LENGTH_LONG).show();
-
-                    // Below code is to make sure that the button text changes to finish quiz on final question, and to
-                    // record the final score in an ArrayList
-                    if (questionNum < getQuestionList().size() - 2) {
-                        questionNum++;
-
-                        setQuestion(retrieveQuestionFromDb(questionNum),score);
-
-                    } else if (questionNum == getQuestionList().size() - 2) {
-                        questionNum++;
-                        setQuestion(retrieveQuestionFromDb(questionNum),score);
-
-                        continueBtn.setText("Finish Quiz");
-                    } else {
-                        //scoreHistoryList.add(score);
-                        //Toast to check for score at the end
-                        Toast.makeText(getApplicationContext(), Integer.toString(score), Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-
-                }
-            }
-        });
-
-    }
-
-    public Question retrieveQuestionFromDb (int questionNum){
-        Question question = db.questionDao().getQuestion(questionNum);
-        return question;
-    }
 }
+

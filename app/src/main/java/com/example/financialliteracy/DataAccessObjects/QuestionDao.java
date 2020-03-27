@@ -9,6 +9,7 @@ import androidx.room.Update;
 
 import com.example.financialliteracy.Models.Question;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
@@ -27,4 +28,7 @@ public interface QuestionDao {
 
     @Query("SELECT * FROM question WHERE id = :number")
     public Question getQuestion(int number);
+
+    @Query("SELECT * FROM question WHERE category = :number")
+    public List<Question> getQuestionCategory(int number);
 }
