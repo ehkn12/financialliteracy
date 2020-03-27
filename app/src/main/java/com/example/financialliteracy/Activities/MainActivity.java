@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
 
         }
 
-
         //quiz button
         temp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +114,16 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
 
             }
         });
+
+//        temp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Context c = view.getContext();
+//                Intent intent = new Intent(c, QuizActivity.class);
+//                c.startActivity(intent);
+//
+//            }
+//        } );
 
     }
 
