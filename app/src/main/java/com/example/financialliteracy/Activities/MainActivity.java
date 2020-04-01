@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
         lastDay = pref.getInt("LAST_DATE", 0);
         streak = pref.getInt("QUIZ_STREAK", 0);
 
-        swapFragment(investmentCalculatorFragment);
+        swapMenuFragment(investmentCalculatorFragment);
 
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -94,13 +94,13 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.nav_investment:
-                        swapFragment(investmentCalculatorFragment);
+                        swapMenuFragment(investmentCalculatorFragment);
                         break;
                     case R.id.nav_tax:
-                        swapFragment(taxCalculatorFragment);
+                        swapMenuFragment(taxCalculatorFragment);
                         break;
                     case R.id.nav_startquiz:
-                        swapFragment(startQuizFragment);
+                        swapMenuFragment(startQuizFragment);
                         break;
 
                 }
