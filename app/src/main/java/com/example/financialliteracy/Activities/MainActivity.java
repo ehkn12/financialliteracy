@@ -165,6 +165,18 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
             editor.putInt("LAST_DATE", today);
             editor.commit();
 
+        } else if (lastDay != today) {
+            if (lastDay != today - 1) {
+                streak = 0;
+                editor.putInt("QUIZ_STREAK", streak);
+            }
+            Bundle bundle = new Bundle();
+            randomNum = random.nextInt(10);
+            bundle.putInt("question", randomNum);
+            quizPopup.setArguments(bundle);
+            swapFragment(quizPopup);
+            editor.putInt("LAST_DATE", today);
+            editor.commit();
         }
     }
 

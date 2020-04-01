@@ -138,6 +138,7 @@ public class DailyQuizFragment extends DialogFragment implements QuestionAsyncTa
             public void onClick(View v){
                 answer = view.findViewById(radioGroup.getCheckedRadioButtonId());
                 streak = pref.getInt("QUIZ_STREAK", 0);
+                editor.putInt("ANSWERED", 0).commit();
 
                 try {
                     RadioButton answer = view.findViewById(radioGroup.getCheckedRadioButtonId());
