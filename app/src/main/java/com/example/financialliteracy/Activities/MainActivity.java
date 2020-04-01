@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 
 import com.example.financialliteracy.Databases.QuestionDatabase;
+import com.example.financialliteracy.Fragments.CalculatorFragment;
 import com.example.financialliteracy.Fragments.DailyQuizFragment;
 import com.example.financialliteracy.Fragments.InvestmentCalculatorFragment;
 import com.example.financialliteracy.Fragments.StartQuizFragment;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
     private Fragment startQuizFragment;
     private Fragment taxCalculatorFragment;
     private Fragment investmentCalculatorFragment;
+    private Fragment calculatorFragment;
 
     private BottomNavigationView bottomNav;
 
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
         startQuizFragment = new StartQuizFragment();
         taxCalculatorFragment = new TaxCalculatorFragment();
         investmentCalculatorFragment = new InvestmentCalculatorFragment();
+        calculatorFragment = new CalculatorFragment();
 
         pref = this.getSharedPreferences("My Pref", 0);
         editor = pref.edit();
@@ -86,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
         lastDay = pref.getInt("LAST_DATE", 0);
         streak = pref.getInt("QUIZ_STREAK", 0);
 
-        swapMenuFragment(investmentCalculatorFragment);
+        swapMenuFragment(calculatorFragment);
 
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -94,11 +97,11 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
                     case R.id.nav_investment:
-                        swapMenuFragment(investmentCalculatorFragment);
+                        swapMenuFragment(calculatorFragment);
                         break;
-                    case R.id.nav_tax:
-                        swapMenuFragment(taxCalculatorFragment);
-                        break;
+                   // case R.id.nav_tax:
+                       // swapMenuFragment(taxCalculatorFragment);
+                      //  break;
                     case R.id.nav_startquiz:
                         swapMenuFragment(startQuizFragment);
                         break;
@@ -157,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
                 streak = 0;
                 editor.putInt("QUIZ_STREAK", streak);
             }
+            //TODO::// change to method
             Bundle bundle = new Bundle();
             randomNum = random.nextInt(10);
             bundle.putInt("question", randomNum);
