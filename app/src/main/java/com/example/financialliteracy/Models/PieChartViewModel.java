@@ -1,4 +1,4 @@
-package com.example.financialliteracy.Fragments;
+package com.example.financialliteracy.Models;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

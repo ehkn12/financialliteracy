@@ -15,12 +15,12 @@ import com.example.financialliteracy.R;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
-public class taxcalc extends AppCompatActivity {
+public class TaxCalculatorActivity extends AppCompatActivity {
 
-        EditText EditText1, EditText2;
-        TextView textViewR2, textViewR3, textViewR4;
-        Button button;
-        Switch switch1;
+        private EditText EditText1, EditText2;
+        private TextView textViewR2, textViewR3, textViewR4;
+        private Button button;
+        private Switch switch1;
 
 
         @Override

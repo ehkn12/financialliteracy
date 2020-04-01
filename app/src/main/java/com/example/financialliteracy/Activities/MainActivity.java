@@ -1,5 +1,6 @@
 package com.example.financialliteracy.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -11,41 +12,45 @@ import android.content.Context;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import android.widget.EditText;
-import android.widget.RatingBar;
 import android.widget.Toast;
-
-import android.widget.EditText;
-import android.widget.TextView;
 
 
 import com.example.financialliteracy.Databases.QuestionDatabase;
 import com.example.financialliteracy.Fragments.DailyQuizFragment;
-import com.example.financialliteracy.Models.Question;
+import com.example.financialliteracy.Fragments.InvestmentCalculatorFragment;
+import com.example.financialliteracy.Fragments.StartQuizFragment;
+import com.example.financialliteracy.Fragments.TaxCalculatorFragment;
 import com.example.financialliteracy.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-
-import org.w3c.dom.Node;
 
 import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements DailyQuizFragment.OnFragmentInteractionListener {
 
-    Button tax;
 
-
+    //TODO:// to remove
+    private Button tax;
     private Button temp;
     private Button temp2;
     private EditText difficulty;
+
+
+    //keep
     private View popupView;
+
+    private Fragment startQuizFragment;
+    private Fragment taxCalculatorFragment;
+    private Fragment investmentCalculatorFragment;
+
+    private BottomNavigationView bottomNav;
 
     private DailyQuizFragment quizPopup;
     private QuestionDatabase db;
@@ -67,6 +72,11 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        bottomNav = findViewById(R.id.navigation_view);
+        startQuizFragment = new StartQuizFragment();
+        taxCalculatorFragment = new TaxCalculatorFragment();
+        investmentCalculatorFragment = new InvestmentCalculatorFragment();
+
         pref = this.getSharedPreferences("My Pref", 0);
         editor = pref.edit();
         calendar = Calendar.getInstance();
@@ -76,88 +86,55 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
         lastDay = pref.getInt("LAST_DATE", 0);
         streak = pref.getInt("QUIZ_STREAK", 0);
 
+        swapFragment(investmentCalculatorFragment);
 
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
 
-        temp = findViewById(R.id.button_temp);
-        difficulty = findViewById(R.id.edit_difficulty);
-        popupView = findViewById(R.id.container_popup);
-        //remove later
-        temp2 = findViewById(R.id.button_popup);
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.nav_investment:
+                        swapFragment(investmentCalculatorFragment);
+                        break;
+                    case R.id.nav_tax:
+                        swapFragment(taxCalculatorFragment);
+                        break;
+                    case R.id.nav_startquiz:
+                        swapFragment(startQuizFragment);
+                        break;
+
+                }
+                return true;
+            }
+        });
+
 
 
         quizPopup = new DailyQuizFragment();
+        setQuizPopup();
 
-        if (pref.getInt("ANSWERED", 0) == 0) {
-            if (lastDay != today - 1) {
-                streak = 0;
-                editor.putInt("QUIZ_STREAK", streak);
-            }
-            Bundle bundle = new Bundle();
-            randomNum = random.nextInt(10);
-            bundle.putInt("question", randomNum);
-            quizPopup.setArguments(bundle);
-            swapFragment(quizPopup);
-            editor.putInt("LAST_DATE", today);
-            editor.commit();
-
-        }
-
-        //quiz button
-        temp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //code for the quiz category
-                try {
-                    int value = Integer.parseInt(difficulty.getText().toString());
-
-
-                    if (value == 1 || value == 2 || value == 3) {
-                        Context c = view.getContext();
-                        Intent intent = new Intent(c, QuizActivity.class);
-                        intent.putExtra("Difficulty", value);
-                        c.startActivity(intent);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Place a value from 1 to 3!", Toast.LENGTH_LONG).show();
-                    }
-
-                } catch (NumberFormatException e) {
-                    Toast.makeText(getApplicationContext(), "Place a value from 1 to 3!", Toast.LENGTH_LONG).show();
-
-                }
-
-            }
-        });
-
-//        temp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Context c = view.getContext();
-//                Intent intent = new Intent(c, QuizActivity.class);
-//                c.startActivity(intent);
-//
-//            }
-//        } );
 
     }
 
-    public void launchInvestmentCalculatorActivity(View view) {
-
-        Intent intent = new Intent(this, InvestmentCalculatorActivity.class);
-
-
-        tax = (Button) findViewById(R.id.tax);
-        tax.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                openTaxTalc();
-            }
-        });
+    @Override
+    public void onStart() {
+        super.onStart();
+        setQuizPopup();
     }
 
-    public void openTaxTalc (){
-        Intent intent = new Intent(this, taxcalc.class);
+    @Override
+    public void onResume(){
+        super.onResume();
+        setQuizPopup();
+    }
 
-        startActivity(intent);
+
+
+    private void swapMenuFragment(Fragment fragment) {
+        FragmentManager fragmentManager =  getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_layout, fragment);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -172,6 +149,23 @@ public class MainActivity extends AppCompatActivity implements DailyQuizFragment
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container_popup, fragment);
         fragmentTransaction.commit();
+    }
+
+    private void setQuizPopup(){
+        if (pref.getInt("ANSWERED", 0) == 0) {
+            if (lastDay != today - 1) {
+                streak = 0;
+                editor.putInt("QUIZ_STREAK", streak);
+            }
+            Bundle bundle = new Bundle();
+            randomNum = random.nextInt(10);
+            bundle.putInt("question", randomNum);
+            quizPopup.setArguments(bundle);
+            swapFragment(quizPopup);
+            editor.putInt("LAST_DATE", today);
+            editor.commit();
+
+        }
     }
 
 
