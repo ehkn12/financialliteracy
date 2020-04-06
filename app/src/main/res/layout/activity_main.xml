@@ -6,35 +6,36 @@
     android:layout_height="match_parent"
     tools:context=".Activities.MainActivity">
 
-
-    <FrameLayout
-        android:id="@+id/container_popup"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/button_temp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/navigation_view"
-        app:layout_constraintTop_toTopOf="@+id/fragment_layout">
+        android:layout_marginTop="220dp"
+        android:text="Quiz"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/fragment_layout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/navigation_view"
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="launchInvestmentCalculatorActivity"
+        android:text="Investment Calc"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navigation_view"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/bottom_nav_bar" />
-
-
+        app:layout_constraintTop_toBottomOf="@id/button2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="launchExpenseTrackerActivity"
+        android:text="Expense Tracker" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

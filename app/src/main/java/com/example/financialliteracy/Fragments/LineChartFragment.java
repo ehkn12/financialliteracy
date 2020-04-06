@@ -1,10 +1,12 @@
 package com.example.financialliteracy.Fragments;
 
+import androidx.annotation.ColorRes;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,8 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.example.financialliteracy.Models.LineChartViewModel;
 import com.example.financialliteracy.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -24,8 +24,10 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ColorFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 

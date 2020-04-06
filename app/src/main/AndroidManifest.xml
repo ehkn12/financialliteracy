@@ -10,6 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activities.InvestmentCalculatorActivity" />
+        <activity android:name=".Activities.ExpenseTrackerActivity"/>
+        <activity android:name=".Activities.AddExpenseActivity"/>
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,8 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.TaxCalculatorActivity" />
-        <activity android:name=".Activities.QuizActivity"></activity>
+        <activity android:name=".Activities.QuizActivity$QuizActivity" />
     </application>
 
 </manifest>
