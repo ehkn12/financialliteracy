@@ -1,21 +1,20 @@
 package com.example.financialliteracy.Fragments;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.example.financialliteracy.Constants;
 import com.example.financialliteracy.R;
 import com.razerdp.widget.animatedpieview.AnimatedPieView;
 import com.razerdp.widget.animatedpieview.AnimatedPieViewConfig;
@@ -23,16 +22,15 @@ import com.razerdp.widget.animatedpieview.callback.OnPieSelectListener;
 import com.razerdp.widget.animatedpieview.data.IPieInfo;
 import com.razerdp.widget.animatedpieview.data.SimplePieInfo;
 
-public class PieChartFragment extends Fragment {
+import java.util.HashMap;
+import java.util.Map;
+
+public class ExpensePieChartFragment extends Fragment {
 
     private PieChartViewModel mPieChartViewModel;
+    private String[] categories;
 
-//    public static PieChartFragment newInstance() {
-//        return new PieChartFragment();
-//    }
-    //empty constructor
-
-    public PieChartFragment(){
+    public ExpensePieChartFragment(){
 
     }
 
@@ -48,26 +46,26 @@ public class PieChartFragment extends Fragment {
         final TextView textView = root.findViewById(R.id.text_pieChart);
         AnimatedPieView animatedPieView = root.findViewById(R.id.pieView);
 
-        double futureValue = getArguments().getDouble("Future Value", 0);
-        double interestPrinciple = getArguments().getDouble("Interest Principle", 0);
-        double interestContribution = getArguments().getDouble("Interest Contributions", 0);
-
-        float futureValueFloat = (float)futureValue;
-        float interestPrincipleFloat = (float)interestPrinciple;
-        float interestContributionFloat = (float)interestContribution;
-
+        categories = Constants.categories;
+        Map<String, Float> map = new HashMap<>();
+        for(String category : categories){
+            map.put(category, new Float(getArguments().getDouble(category, 0)));
+        }
 
         AnimatedPieViewConfig config = new AnimatedPieViewConfig();
-        config.addData(new SimplePieInfo(futureValueFloat, Color.parseColor("#AA85C8F2"), "Future Value"));
-        config.addData(new SimplePieInfo(interestPrincipleFloat,Color.parseColor("#AAF2811D"), "Interest Principle"));
-        config.addData(new SimplePieInfo(interestContributionFloat,Color.parseColor("#AAF26666"), "Interest Contribution"));
+        Map<String, String> colorMap = Constants.colorMap;
+        for(String category : categories){
+            if(map.get(category).doubleValue() < 0.0001) continue;
+            config.addData(new SimplePieInfo(map.get(category).doubleValue(), Color.parseColor(colorMap.get(category)), category));
+        }
         config.drawText(true);
         config.strokeMode(false);
         config.textSize(24);
+        config.duration(1000);
         config.selectListener(new OnPieSelectListener<IPieInfo>() {
             @Override
             public void onSelectPie(@NonNull IPieInfo pieInfo, boolean isFloatUp) {
-                Toast.makeText(PieChartFragment.this.getActivity(),pieInfo.getDesc() + " : " + pieInfo.getValue(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ExpensePieChartFragment.this.getActivity(),String.format("%s : %.2f", pieInfo.getDesc(), pieInfo.getValue()), Toast.LENGTH_SHORT).show();
             }
         });
 

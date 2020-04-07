@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="planets_array">
+        <item>Rent/Mortgage</item>
+        <item>Insurance</item>
+        <item>Utilities</item>
+        <item>Groceries</item>
+        <item>Food</item>
+        <item>Transport</item>
+        <item>Misc</item>
+        <item>Entertainment</item>
+    </string-array>
+</resources>
