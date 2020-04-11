@@ -19,7 +19,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
         <activity android:name=".Activities.QuizActivity$QuizActivity" />
+=======
+        <activity android:name=".Activities.InvestmentCalculatorActivity" />
+        <activity android:name=".Activities.QuizActivity"></activity>
+>>>>>>> parent of 78a99e2... Update AndroidManifest.xml
     </application>
 
 </manifest>
